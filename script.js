@@ -1,26 +1,19 @@
-// ... existing code ...
-// Firebase CDN
-// Adiciona Firebase ao site
-(function() {
-  var script1 = document.createElement('script');
-  script1.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js';
-  document.head.appendChild(script1);
-  var script2 = document.createElement('script');
-  script2.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js';
-  document.head.appendChild(script2);
-})();
-
-// Espera Firebase carregar
-function waitForFirebase(cb) {
-  if (window.firebase && window.firebase.firestore) {
-    cb();
-  } else {
-    setTimeout(() => waitForFirebase(cb), 100);
-  }
+// Carregar scripts Firebase corretamente
+function loadScript(src, callback) {
+  const s = document.createElement('script');
+  s.src = src;
+  s.onload = callback;
+  s.onerror = () => console.error(`Erro ao carregar ${src}`);
+  document.head.appendChild(s);
 }
 
-waitForFirebase(() => {
-  // Configuração Firebase
+loadScript('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js', () => {
+  loadScript('https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js', () => {
+    initFirebase();
+  });
+});
+
+function initFirebase() {
   const firebaseConfig = {
     apiKey: "AIzaSyANpc4sfF14XeHjUPqQu5XGePiOHbe5TM4",
     authDomain: "balls-stats.firebaseapp.com",
@@ -32,29 +25,106 @@ waitForFirebase(() => {
   };
   firebase.initializeApp(firebaseConfig);
   window.db = firebase.firestore();
-  // Regista visita
+
+  // Registar visita
   window.db.collection('visits').add({
     timestamp: new Date(),
     userAgent: navigator.userAgent
   });
-});
+}
 
-// ... existing code ...
+// Bola
+class Ball {
+  constructor(x, y, radius, color, vx, vy) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.vx = vx;
+    this.vy = vy;
+    this.active = true;
+  }
+
+  draw(ctx) {
+    if (!this.active) return;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+
+  update() {
+    if (!this.active) return;
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x <= this.radius || this.x >= canvas.width - this.radius) this.vx *= -1;
+    if (this.y <= this.radius || this.y >= canvas.height - this.radius) this.vy *= -1;
+  }
+
+  isPointInside(px, py) {
+    const dx = this.x - px;
+    const dy = this.y - py;
+    return Math.sqrt(dx * dx + dy * dy) <= this.radius;
+  }
+
+  pop() {
+    this.active = false;
+  }
+}
+
+const canvas = document.getElementById('balls-canvas');
+const ctx = canvas.getContext('2d');
+const messageDiv = document.getElementById('message');
+const messages = [
+  "Tu consegues!",
+  "És incrível!",
+  "Nunca desistas!",
+  "Confia no teu caminho!",
+  "Hoje vai ser um bom dia!"
+];
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let balls = [];
+for (let i = 0; i < 20; i++) {
+  balls.push(new Ball(
+    Math.random() * canvas.width,
+    Math.random() * canvas.height,
+    20 + Math.random() * 30,
+    `hsl(${Math.random() * 360}, 70%, 60%)`,
+    (Math.random() - 0.5) * 4,
+    (Math.random() - 0.5) * 4
+  ));
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let ball of balls) {
+    ball.update();
+    ball.draw(ctx);
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+
 canvas.addEventListener('click', function(e) {
-  if (!messageDiv.classList.contains('hidden')) return; // Only one message at a time
+  if (!messageDiv.classList.contains('hidden')) return;
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
+
   for (let ball of balls) {
-    if (ball.isPointInside(x, y)) {
+    if (ball.active && ball.isPointInside(x, y)) {
       ball.pop();
+
       // Firebase: regista clique
       if (window.db) {
-        // Quadrantes: 1=top-left, 2=top-right, 3=bottom-left, 4=bottom-right
         let quad = 1;
-        if (x > canvas.width/2 && y <= canvas.height/2) quad = 2;
-        else if (x <= canvas.width/2 && y > canvas.height/2) quad = 3;
-        else if (x > canvas.width/2 && y > canvas.height/2) quad = 4;
+        if (x > canvas.width / 2 && y <= canvas.height / 2) quad = 2;
+        else if (x <= canvas.width / 2 && y > canvas.height / 2) quad = 3;
+        else if (x > canvas.width / 2 && y > canvas.height / 2) quad = 4;
+
         window.db.collection('clicks').add({
           timestamp: new Date(),
           color: ball.color,
@@ -64,9 +134,16 @@ canvas.addEventListener('click', function(e) {
           quadrant: quad
         });
       }
+
       showMessage();
       break;
     }
   }
 });
-// ... existing code ...
+
+function showMessage() {
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  messageDiv.textContent = msg;
+  messageDiv.classList.remove('hidden');
+  setTimeout(() => messageDiv.classList.add('hidden'), 3000);
+}
