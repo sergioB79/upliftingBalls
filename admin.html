@@ -7,12 +7,37 @@
   <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    #admin-panel { max-width: 700px; margin: 60px auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 32px; font-family: 'Indie Flower', cursive; color: #4a7c59; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #d4f8e8;
+      font-family: 'Indie Flower', cursive;
+      color: #4a7c59;
+      overflow-y: auto;
+    }
+    #admin-panel {
+      max-width: 700px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 32px;
+    }
     h1 { font-size: 2.2rem; }
     .stat { margin: 18px 0; font-size: 1.3rem; }
-    table { width: 100%; border-collapse: collapse; margin-top: 18px; }
-    th, td { border: 1px solid #b2f7ef; padding: 8px 12px; text-align: center; }
-    th { background: #d4f8e8; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+    }
+    th, td {
+      border: 1px solid #b2f7ef;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    th {
+      background: #d4f8e8;
+    }
   </style>
 </head>
 <body>
@@ -20,25 +45,36 @@
     <h1>Estatísticas das Bolas</h1>
     <div class="stat">Total de visitas: <span id="visit-count">...</span></div>
     <div class="stat">Total de cliques em bolas: <span id="click-count">...</span></div>
+
     <h2>Cliques por Quadrante</h2>
     <table>
       <thead><tr><th>Quadrante</th><th>Cliques</th></tr></thead>
       <tbody id="quadrant-table"></tbody>
     </table>
+
     <h2>Cliques por Cor</h2>
     <table>
-      <thead><tr><th>Cor</th><th>Cliques</th></tr></thead>
+      <thead><tr><th>Grupo de Cor</th><th>Cliques</th></tr></thead>
       <tbody id="color-table"></tbody>
     </table>
+
     <h2>Cliques por Tamanho</h2>
     <table>
       <thead><tr><th>Tamanho</th><th>Cliques</th></tr></thead>
       <tbody id="size-table"></tbody>
     </table>
+
+    <h2>Cliques por Velocidade</h2>
+    <table>
+      <thead><tr><th>Velocidade</th><th>Cliques</th></tr></thead>
+      <tbody id="speed-table"></tbody>
+    </table>
   </div>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-config.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
+
