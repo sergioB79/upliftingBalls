@@ -1,0 +1,57 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #d4f8e8;
+  width: 100vw;
+  height: 100vh;
+}
+
+#balls-canvas {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+#message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,0.85);
+  border-radius: 20px;
+  padding: 32px 48px;
+  font-family: 'Indie Flower', cursive;
+  font-size: 2.2rem;
+  color: #4a7c59;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+#message.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#hint {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.7);
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.3rem;
+  color: #4a7c59;
+  z-index: 3;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  pointer-events: none;
+}
