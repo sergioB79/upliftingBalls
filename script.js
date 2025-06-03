@@ -88,6 +88,56 @@ window.addEventListener("DOMContentLoaded", function () {
     "Tu és suficiente.",
     "Há força em ti que ainda não viste.",
     "Sê gentil contigo.",
+    "Leva o teu tempo, mas nunca te rendas.",
+    "És feito de possibilidades infinitas.",
+    "Mesmo nos dias nublados, brilhas.",
+    "O teu esforço vai valer a pena.",
+    "Não precisas ser perfeito, só presente.",
+    "Há coragem nos teus silêncios.",
+    "Tu és o teu maior aliado.",
+    "Já superaste tanto — lembra-te disso.",
+    "Cada respiração é uma hipótese nova.",
+    "Caminha com o coração aberto.",
+    "Tu tens valor mesmo quando duvidas.",
+    "A tua verdade é o teu poder.",
+    "Pequenos passos também fazem caminho.",
+    "Acreditar em ti é o primeiro milagre.",
+    "Estás exatamente onde precisas de estar.",
+    "A tua luz incomoda quem vive na sombra — continua a brilhar.",
+    "Não deixes que o medo te pare.",
+    "Só tu podes escrever a tua história.",
+    "O teu recomeço começa agora.",
+    "Há força nas tuas cicatrizes.",
+    "O que hoje parece difícil, amanhã será conquista.",
+    "O teu ritmo é o certo.",
+    "Tens tudo o que precisas dentro de ti.",
+    "A tua existência já é um feito.",
+    "Sorrir hoje é um acto de coragem.",
+    "Não subestimes o teu impacto.",
+    "És a resposta a muitos 'impossíveis'.",
+    "Ainda bem que não desististe ontem.",
+    "Cada escolha consciente é um passo na direção certa.",
+    "Tu sabes mais do que pensas.",
+    "Ser verdadeiro é revolucionário.",
+    "Estás a construir algo bonito, mesmo que não vejas ainda.",
+    "Confia no teu instinto.",
+    "Nada em ti é um erro.",
+    "A tua autenticidade é um presente para o mundo.",
+    "Não precisas de comparação — só de presença.",
+    "Fica. Sente. Cresce.",
+    "És digno do melhor que a vida tem.",
+    "Quando te ouves, o mundo escuta.",
+    "A tua coragem é contagiante.",
+    "Estás a florescer, mesmo nos dias cinzentos.",
+    "Já és tudo o que procuras ser.",
+    "És feito de sol e resistência.",
+    "És prova de que é possível continuar.",
+    "O teu cansaço também é sagrado.",
+    "Hoje é um bom dia para acreditares em ti.",
+    "A tua sensibilidade é força, não fraqueza.",
+    "Nunca subestimes o poder de um passo pequeno.",
+    "O mundo precisa da tua versão mais honesta.",
+    "És a esperança vestida de gente.",
     "Tudo começa com um passo.",
     "Errar é parte do caminho.",
     "Mantém o foco no que importa.",
@@ -144,10 +194,12 @@ window.addEventListener("DOMContentLoaded", function () {
         ball.pop();
         poppedCount++;
 
-        if (poppedCount >= 10) {
-          poppedCount = 0;
-          createBalls(10);
-        }
+      if (poppedCount >= 10) {
+        poppedCount = 0;
+        // Limpa bolas rebentadas do array
+        balls = balls.filter(ball => ball.active);
+        createBalls(10);
+      }
 
         if (window.db) {
           let quad = 1;
@@ -171,10 +223,18 @@ window.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  function showMessage() {
-    const msg = messages[Math.floor(Math.random() * messages.length)];
-    messageDiv.textContent = msg;
-    messageDiv.classList.remove('hidden');
-    setTimeout(() => messageDiv.classList.add('hidden'), 3000);
-  }
+ let lastMessageIndex = -1;
+
+function showMessage() {
+  let index;
+  do {
+    index = Math.floor(Math.random() * messages.length);
+  } while (index === lastMessageIndex && messages.length > 1);
+  lastMessageIndex = index;
+
+  const msg = messages[index];
+  messageDiv.textContent = msg;
+  messageDiv.classList.remove('hidden');
+  setTimeout(() => messageDiv.classList.add('hidden'), 3000);
+}
 });
