@@ -1,5 +1,4 @@
 window.addEventListener("DOMContentLoaded", function () {
-  // Carregar scripts Firebase corretamente
   function loadScript(src, callback) {
     const s = document.createElement('script');
     s.src = src;
@@ -27,14 +26,12 @@ window.addEventListener("DOMContentLoaded", function () {
     firebase.initializeApp(firebaseConfig);
     window.db = firebase.firestore();
 
-    // Registar visita
     window.db.collection('visits').add({
       timestamp: new Date(),
       userAgent: navigator.userAgent
     });
   }
 
-  // Bola
   class Ball {
     constructor(x, y, radius, color, vx, vy) {
       this.x = x;
@@ -76,28 +73,55 @@ window.addEventListener("DOMContentLoaded", function () {
   const canvas = document.getElementById('balls-canvas');
   const ctx = canvas.getContext('2d');
   const messageDiv = document.getElementById('message');
+
   const messages = [
     "Tu consegues!",
     "És incrível!",
     "Nunca desistas!",
     "Confia no teu caminho!",
-    "Hoje vai ser um bom dia!"
+    "Hoje vai ser um bom dia!",
+    "Respira fundo e recomeça.",
+    "Cada dia é uma nova oportunidade.",
+    "A tua energia é única.",
+    "Mesmo devagar, estás a avançar.",
+    "Estás mais perto do que pensas.",
+    "Tu és suficiente.",
+    "Há força em ti que ainda não viste.",
+    "Sê gentil contigo.",
+    "Tudo começa com um passo.",
+    "Errar é parte do caminho.",
+    "Mantém o foco no que importa.",
+    "És mais forte do que pareces.",
+    "Há beleza na imperfeição.",
+    "A luz que procuras está em ti.",
+    "Não pares antes do milagre.",
+    "Confia no processo.",
+    "Tu inspiras mais do que sabes.",
+    "Cada pequena vitória conta.",
+    "A tua presença já é um impacto.",
+    "Hoje é o teu momento. Aproveita-o!"
   ];
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
   let balls = [];
-  for (let i = 0; i < 20; i++) {
-    balls.push(new Ball(
-      Math.random() * canvas.width,
-      Math.random() * canvas.height,
-      20 + Math.random() * 30,
-      `hsl(${Math.random() * 360}, 70%, 60%)`,
-      (Math.random() - 0.5) * 4,
-      (Math.random() - 0.5) * 4
-    ));
+  let poppedCount = 0;
+
+  function createBalls(count = 10) {
+    for (let i = 0; i < count; i++) {
+      balls.push(new Ball(
+        Math.random() * canvas.width,
+        Math.random() * canvas.height,
+        20 + Math.random() * 30,
+        `hsl(${Math.random() * 360}, 70%, 60%)`,
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 4
+      ));
+    }
   }
+
+  createBalls(20); // inicia com 20 bolas
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -118,8 +142,13 @@ window.addEventListener("DOMContentLoaded", function () {
     for (let ball of balls) {
       if (ball.active && ball.isPointInside(x, y)) {
         ball.pop();
+        poppedCount++;
 
-        // Firebase: regista clique
+        if (poppedCount >= 10) {
+          poppedCount = 0;
+          createBalls(10);
+        }
+
         if (window.db) {
           let quad = 1;
           if (x > canvas.width / 2 && y <= canvas.height / 2) quad = 2;
